@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plexor — SaaS Framer Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #080808;
+  --surface: #0f0f0f;
+  --border: #1e1e1e;
+  --border-bright: #2e2e2e;
+  --text: #f0ede8;
+  --muted: #5a5650;
+  --accent: #c8f549;
+  --accent-dim: rgba(200, 245, 73, 0.08);
+  --accent-glow: rgba(200, 245, 73, 0.15);
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease, width 0.2s, height 0.2s;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(200,245,73,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.25s ease;
+  transform: translate(-50%, -50%);
+}
+body:has(a:hover) .cursor, body:has(button:hover) .cursor { transform: translate(-50%,-50%) scale(2.5); }
+body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { transform: translate(-50%,-50%) scale(1.5); opacity: 0.3; }
+
+/* GRAIN OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.35;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 48px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(20px);
+  animation: fadeDown 0.8s ease both;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-logo {
+  font-size: 18px; font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.logo-dot {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+.nav-links {
+  display: flex; gap: 40px; list-style: none;
+}
+
+.nav-links a {
+  font-size: 12px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+}
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--accent);
+  color: #000;
+  padding: 10px 22px;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  border: none; cursor: none;
+  transition: all 0.2s;
+  font-family: 'Syne', sans-serif;
+}
+.nav-cta:hover { background: #d9ff60; transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 140px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Radial glow */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 20%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 500px;
+  background: radial-gradient(ellipse, rgba(200,245,73,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Grid lines */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+}
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 32px;
+  display: flex; align-items: center; gap: 12px;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.hero-tag::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--accent);
+}
+
+.hero-headline {
+  font-size: clamp(60px, 9vw, 130px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-headline em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.hero-sub-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  animation: fadeUp 0.8s 0.35s ease both;
+}
+
+.hero-desc {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 400px;
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+.hero-actions {
+  display: flex; gap: 16px; align-items: center; flex-shrink: 0;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  padding: 16px 36px;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border: none; cursor: none;
+  font-family: 'Syne', sans-serif;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '→';
+  position: absolute; right: -20px; top: 50%;
+  transform: translateY(-50%);
+  transition: right 0.2s;
+}
+.btn-primary:hover::after { right: 14px; }
+.btn-primary:hover { padding-right: 48px; background: #d9ff60; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  padding: 16px 28px;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  border: 1px solid var(--border-bright); cursor: none;
+  font-family: 'Syne', sans-serif;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+/* STATS ROW */
+.stats-row {
+  display: flex;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  animation: fadeUp 0.8s 0.5s ease both;
+}
+
+.stat {
+  flex: 1;
+  padding: 32px 48px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.stat:last-child { border-right: none; }
+
+.stat-val {
+  font-size: 42px; font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-val span { color: var(--accent); }
+
+.stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* PREVIEW SECTION */
+.preview-section {
+  padding: 120px 48px;
+  position: relative;
+}
+
+.section-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-end; margin-bottom: 60px;
+  flex-wrap: wrap; gap: 24px;
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.0;
+}
+
+.section-title em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic; font-weight: 400;
+  color: var(--muted);
+}
+
+/* MOCK BROWSER */
+.browser-wrap {
+  border: 1px solid var(--border-bright);
+  background: var(--surface);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 60px 120px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+}
+
+.browser-bar {
+  display: flex; align-items: center;
+  padding: 14px 20px; gap: 8px;
+  border-bottom: 1px solid var(--border);
+  background: #0a0a0a;
+}
+
+.browser-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+
+.browser-url {
+  flex: 1; margin: 0 16px;
+  background: var(--border);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+}
+
+.browser-content {
+  height: 480px;
+  background: linear-gradient(160deg, #0e1108 0%, #080808 50%, #0a0d06 100%);
+  display: flex; flex-direction: column;
+  padding: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.browser-content::before {
+  content: '';
+  position: absolute; top: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(200,245,73,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.mock-nav {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 80px;
+  opacity: 0.7;
+}
+
+.mock-logo {
+  font-size: 14px; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.mock-links {
+  display: flex; gap: 24px;
+}
+
+.mock-link {
+  width: 40px; height: 6px;
+  background: var(--border-bright); border-radius: 2px;
+}
+
+.mock-btn-sm {
+  width: 72px; height: 28px;
+  background: var(--accent); border-radius: 2px;
+  opacity: 0.9;
+}
+
+.mock-headline {
+  font-size: 52px; font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.9;
+  margin-bottom: 24px;
+}
+
+.mock-headline span { color: var(--accent); }
+
+.mock-subtext {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 36px;
+}
+.mock-line {
+  height: 8px; background: var(--border-bright);
+  border-radius: 2px;
+}
+
+.mock-actions { display: flex; gap: 12px; }
+.mock-cta {
+  height: 40px; width: 130px;
+  background: var(--accent); border-radius: 2px;
+}
+.mock-cta-ghost {
+  height: 40px; width: 110px;
+  border: 1px solid var(--border-bright); border-radius: 2px;
+}
+
+/* FEATURES */
+.features-section {
+  padding: 0 0 120px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+}
+
+.feature {
+  padding: 48px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature:last-child, .feature:nth-child(3) { border-right: none; }
+.feature:nth-child(4), .feature:nth-child(5), .feature:nth-child(6) { border-bottom: none; }
+
+.feature::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--accent-dim);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.feature:hover::before { opacity: 1; }
+
+.feature-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em;
+  color: var(--accent); margin-bottom: 32px;
+}
+
+.feature-icon {
+  width: 44px; height: 44px;
+  border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  font-size: 18px;
+  transition: border-color 0.3s;
+}
+
+.feature:hover .feature-icon { border-color: var(--accent); }
+
+.feature h3 {
+  font-size: 18px; font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.feature p {
+  font-size: 13px; color: var(--muted);
+  line-height: 1.7; font-weight: 400;
+}
+
+/* PAGES SECTION */
+.pages-section {
+  padding: 0 48px 120px;
+}
+
+.pages-scroll {
+  display: flex; gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-bright) transparent;
+}
+
+.page-card {
+  flex-shrink: 0;
+  width: 280px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: none;
+}
+
+.page-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,245,73,0.2);
+}
+
+.page-thumb {
+  height: 180px;
+  display: flex; flex-direction: column;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-thumb-bar {
+  height: 4px; border-radius: 1px;
+  background: var(--border-bright);
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.page-thumb-bar:first-child { width: 60%; background: var(--accent); opacity: 0.5; }
+
+.page-body-lines {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: auto;
+}
+
+.page-line {
+  height: 5px; border-radius: 1px;
+  background: var(--border-bright);
+}
+
+.page-info {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  align-items: center;
+}
+
+.page-name {
+  font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+}
+
+.page-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* TESTIMONIAL */
+.quote-section {
+  padding: 80px 48px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.quote-mark {
+  font-family: 'Instrument Serif', serif;
+  font-size: 120px; line-height: 0.7;
+  color: var(--accent); opacity: 0.3;
+  margin-bottom: -20px;
+}
+
+.quote-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px; font-style: italic;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  margin-bottom: 32px;
+}
+
+.quote-author {
+  display: flex; align-items: center; gap: 16px;
+}
+
+.author-avatar {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), #88b800);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #000;
+}
+
+.author-info { font-size: 13px; }
+.author-name { font-weight: 700; margin-bottom: 2px; }
+.author-role { color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+
+.quote-stats {
+  display: flex; flex-direction: column; gap: 32px;
+}
+
+.q-stat-val {
+  font-size: 64px; font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1;
+  color: var(--accent);
+}
+
+.q-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 4px;
+}
+
+/* CTA SECTION */
+.cta-section {
+  padding: 160px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,245,73,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 32px;
+}
+
+.cta-title {
+  font-size: clamp(50px, 8vw, 100px);
+  font-weight: 800; letter-spacing: -0.04em;
+  line-height: 0.9; margin-bottom: 48px;
+}
+
+.cta-title em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic; font-weight: 400;
+}
+
+.cta-actions {
+  display: flex; gap: 16px;
+  justify-content: center; align-items: center;
+  flex-wrap: wrap;
+}
+
+.price-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted); margin-top: 20px;
+}
+
+.price-tag span { color: var(--accent); }
+
+/* FOOTER */
+footer {
+  padding: 40px 48px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 16px;
+}
+
+.footer-logo {
+  font-size: 16px; font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.footer-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .hero { padding: 120px 24px 60px; }
+  .stats-row { flex-direction: column; }
+  .stat { border-right: none; border-bottom: 1px solid var(--border); }
+  .preview-section, .pages-section { padding: 80px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .feature { border-right: none; border-bottom: 1px solid var(--border); }
+  .feature:last-child { border-bottom: none; }
+  .quote-section { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+  .cta-section { padding: 100px 24px; }
+  footer { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-dot"></div>
+    PLEXOR
+  </div>
+  <ul class="nav-links">
+    <li><a href="#preview">Preview</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pages">Pages</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Live Demo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Framer Template · SaaS Edition</div>
+  <h1 class="hero-headline">
+    BUILD<br>
+    SOMETHING<br>
+    <em>Unforgettable.</em>
+  </h1>
+  <div class="hero-sub-row">
+    <p class="hero-desc">Plexor is a dark, editorial-grade Framer template engineered for SaaS products that demand to be taken seriously. No generic layouts. No compromises.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" id="cta" onclick="alert('🚀 Live demo would open here!')">Preview Live Demo</button>
+      <button class="btn-ghost">See Pages</button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-row reveal">
+  <div class="stat">
+    <div class="stat-val">24<span>+</span></div>
+    <div class="stat-label">Unique Pages</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">100<span>%</span></div>
+    <div class="stat-label">Framer Native</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">48<span>h</span></div>
+    <div class="stat-label">Avg. Launch Time</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">∞</div>
+    <div class="stat-label">Customizable</div>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<section class="preview-section" id="preview">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-label">// Template Preview</div>
+      <h2 class="section-title">See it in<br><em>action.</em></h2>
+    </div>
+    <p style="max-width:280px;font-size:13px;color:var(--muted);line-height:1.7;">Every section is meticulously crafted. Every animation purposeful. Every detail considered.</p>
+  </div>
+
+  <div class="browser-wrap reveal">
+    <div class="browser-bar">
+      <div class="browser-dot" style="background:#ff5f57"></div>
+      <div class="browser-dot" style="background:#febc2e"></div>
+      <div class="browser-dot" style="background:#28c840"></div>
+      <div class="browser-url">plexor.framer.website</div>
+    </div>
+    <div class="browser-content">
+      <div class="mock-nav">
+        <div class="mock-logo">PLEXOR</div>
+        <div class="mock-links">
+          <div class="mock-link"></div>
+          <div class="mock-link"></div>
+          <div class="mock-link"></div>
+        </div>
+        <div class="mock-btn-sm"></div>
+      </div>
+      <div class="mock-headline">
+        YOUR<br>SAAS.<br><span>ELEVATED.</span>
+      </div>
+      <div class="mock-subtext">
+        <div class="mock-line" style="width:80%"></div>
+        <div class="mock-line" style="width:65%"></div>
+      </div>
+      <div class="mock-actions">
+        <div class="mock-cta"></div>
+        <div class="mock-cta-ghost"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div style="padding: 0 48px 48px;" class="reveal">
+    <div class="section-label">// What's Inside</div>
+    <h2 class="section-title">Built for<br><em>builders.</em></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature reveal">
+      <div class="feature-num">01 —</div>
+      <div class="feature-icon">⚡</div>
+      <h3>Dark Editorial Design</h3>
+      <p>High-contrast typography, intentional negative space, and a grid system that demands attention. This isn't a template — it's a statement.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-num">02 —</div>
+      <div class="feature-icon">🎞</div>
+      <h3>Cinema-Grade Animations</h3>
+      <p>Every entrance, scroll effect, and hover state is choreographed. Smooth, purposeful motion that elevates the experience without distracting from it.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-num">03 —</div>
+      <div class="feature-icon">🧩</div>
+      <h3>Modular Components</h3>
+      <p>Mix-and-match sections with Framer's CMS. Hero variants, pricing tables, testimonials, FAQs — all designed to work together seamlessly.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-num">04 —</div>
+      <div class="feature-icon">📱</div>
+      <h3>Pixel-Perfect Responsive</h3>
+      <p>Tested across every breakpoint. Mobile, tablet, desktop, ultrawide — Plexor looks sharp at every size without compromise.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-num">05 —</div>
+      <div class="feature-icon">🎨</div>
+      <h3>One-Click Theming</h3>
+      <p>Swap accent colors, tweak typography, and make it yours in minutes. CSS variables throughout mean global changes take seconds.</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-num">06 —</div>
+      <div class="feature-icon">📦</div>
+      <h3>Lifetime Updates</h3>
+      <p>Purchase once, own forever. Every new page, component, and feature added to Plexor is yours automatically. No subscriptions, no gotchas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PAGES -->
+<section class="pages-section" id="pages">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-label">// 24 Pages Included</div>
+      <h2 class="section-title">Every page<br><em>you need.</em></h2>
+    </div>
+  </div>
+  <div class="pages-scroll reveal">
+    <!-- Page cards -->
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#0e1108,#080808);">
+        <div class="page-thumb-bar"></div>
+        <div class="page-thumb-bar" style="width:100%;background:var(--border-bright)"></div>
+        <div class="page-body-lines">
+          <div class="page-line" style="width:80%"></div>
+          <div class="page-line" style="width:60%"></div>
+          <div class="page-line" style="width:90%"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">Homepage</span>
+        <span class="page-tag">Hero</span>
+      </div>
+    </div>
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#0a0d10,#080808);">
+        <div class="page-thumb-bar" style="background:#1e2a3a"></div>
+        <div class="page-body-lines" style="gap:10px">
+          <div class="page-line" style="width:40%;background:var(--accent);opacity:0.4;height:8px"></div>
+          <div class="page-line" style="width:100%"></div>
+          <div class="page-line" style="width:70%"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">Pricing</span>
+        <span class="page-tag">Convert</span>
+      </div>
+    </div>
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#100a0a,#080808);">
+        <div class="page-thumb-bar" style="background:#2a1a1a"></div>
+        <div class="page-body-lines">
+          <div class="page-line" style="width:55%;height:8px;background:#c8f549;opacity:0.3"></div>
+          <div class="page-line" style="width:80%"></div>
+          <div class="page-line" style="width:65%"></div>
+          <div class="page-line" style="width:90%"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">Features</span>
+        <span class="page-tag">Product</span>
+      </div>
+    </div>
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#0a0810,#080808);">
+        <div class="page-thumb-bar" style="background:#1e1a2a"></div>
+        <div class="page-body-lines">
+          <div class="page-line" style="width:70%"></div>
+          <div class="page-line" style="width:50%"></div>
+          <div class="page-line" style="width:85%"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">About</span>
+        <span class="page-tag">Brand</span>
+      </div>
+    </div>
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#080e08,#080808);">
+        <div class="page-thumb-bar" style="background:#0e1e0e"></div>
+        <div class="page-body-lines">
+          <div class="page-line" style="width:90%"></div>
+          <div class="page-line" style="width:60%"></div>
+          <div class="page-line" style="width:75%;height:8px;background:#c8f549;opacity:0.2"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">Blog</span>
+        <span class="page-tag">Content</span>
+      </div>
+    </div>
+    <div class="page-card">
+      <div class="page-thumb" style="background:linear-gradient(160deg,#0e0e08,#080808);">
+        <div class="page-thumb-bar" style="background:#2a2a1a"></div>
+        <div class="page-body-lines">
+          <div class="page-line" style="width:45%"></div>
+          <div class="page-line" style="width:100%"></div>
+          <div class="page-line" style="width:80%"></div>
+        </div>
+      </div>
+      <div class="page-info">
+        <span class="page-name">Changelog</span>
+        <span class="page-tag">Trust</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="quote-section reveal">
+  <div>
+    <div class="quote-mark">"</div>
+    <p class="quote-text">Plexor cut our go-to-market time in half. We launched in 3 days and got our first paying customer before we even finished tweaking the colors.</p>
+    <div class="quote-author">
+      <div class="author-avatar">JK</div>
+      <div class="author-info">
+        <div class="author-name">Jamie Kim</div>
+        <div class="author-role">Co-founder, Velora AI</div>
+      </div>
+    </div>
+  </div>
+  <div class="quote-stats">
+    <div>
+      <div class="q-stat-val">3x</div>
+      <div class="q-stat-label">Faster launch vs custom build</div>
+    </div>
+    <div>
+      <div class="q-stat-val">840+</div>
+      <div class="q-stat-label">Teams using Plexor</div>
+    </div>
+    <div>
+      <div class="q-stat-val">4.9★</div>
+      <div class="q-stat-label">Average rating</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="cta-label">// Ready to build?</div>
+  <h2 class="cta-title reveal">
+    Your SaaS.<br>
+    <em>Your stage.</em>
+  </h2>
+  <div class="cta-actions reveal">
+    <button class="btn-primary" onclick="alert('🚀 Live demo would open here!')">Preview Live Demo</button>
+    <button class="btn-ghost" onclick="alert('💾 Purchase flow would open here!')">Get Template — $79</button>
+  </div>
+  <div class="price-tag reveal">One-time purchase · <span>Lifetime updates included</span> · Instant delivery</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <div class="logo-dot"></div>
+    PLEXOR
+  </div>
+  <div class="footer-note">A Framer template by your studio · 2025</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
